@@ -1,0 +1,40 @@
+{
+	"schemaVersion": 1,
+	"id": "clientsided",
+	"version": "${version}",
+	"name": "Clientsided",
+	"description": "Experimenting so I can learn how to make client-sided mods!",
+	"authors": [
+		"NiaSwift"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/NiaSwift/Clientsided"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/clientsided/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.niaswift.clientsided.Clientsided"
+		],
+		"fabric-datagen": [
+			"com.niaswift.clientsided.ClientsidedDataGenerator"
+		],
+        "client": [
+            "com.niaswift.clientsided.ClientsidedClient"
+        ]
+	},
+	"mixins": [
+		"clientsided.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.16.14",
+		"minecraft": "~1.21.5",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
