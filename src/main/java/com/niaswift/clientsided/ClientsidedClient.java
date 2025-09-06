@@ -4,24 +4,30 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.Items;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 public class ClientsidedClient implements ClientModInitializer {
 
     private static KeyBinding keyBinding;
+    private static boolean toggleHUD;
 
     @Override
     public void onInitializeClient() {
 
         keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.clientsided.test", // The translation key of the keybinding's name
+                "key.clientsided.toggleHUD", // The translation key of the keybinding's name
                 InputUtil.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
                 GLFW.GLFW_KEY_V, // The keycode of the key
                 "key.categories.creative" // The translation key of the keybinding's category.
@@ -30,31 +36,55 @@ public class ClientsidedClient implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if ( client.player != null ) {
                 while (keyBinding.wasPressed()) {
-                    client.player.sendMessage(Text.literal("Key 1 was pressed!"), false);
+                    toggleHUD =! toggleHUD;
+                    if (toggleHUD) {
+                        client.player.sendMessage(
+                            Text.translatable("toggleHUD",
+                                Text.translatable("toggleHUD.on").formatted(Formatting.GREEN)),
+                            true
+                        );
+                    } else {
+                        client.player.sendMessage(
+                            Text.translatable("toggleHUD",
+                                Text.translatable("toggleHUD.off").formatted(Formatting.RED)),
+                            true
+                        );
+                    }
                 }
             }
         });
 
 
-        HudElementRegistry.addFirst(
-                Identifier.of(Clientsided.MOD_ID),
-                (context, tickCounter) -> {
-                    ClientPlayerEntity player = MinecraftClient.getInstance().player;
-                    if (
-                            player != null
-                                    && player.getHealth() > 10
-                    ) {
-                        int diamondCount = player.getInventory().count(Items.DIAMOND);
-                        context.drawText(
-                                MinecraftClient.getInstance().textRenderer,
-                                "Diamonds in your inventory: " + diamondCount,
-                                5,
-                                527,
-                                0xFFFFFFFF,
-                                true
-                        );
-                    }
-                });
+        HudElementRegistry.attachElementAfter(VanillaHudElements.MISC_OVERLAYS, Identifier.of(Clientsided.MOD_ID), this::hud);
+
+    }
+
+    private void hud(DrawContext context, RenderTickCounter tickCounter) {
+
+        MinecraftClient client = MinecraftClient.getInstance();
+        ClientPlayerEntity player = client.player;
+        if ( player == null ) return;
+
+        int diamondCount = player.getInventory().count(Items.DIAMOND);
+
+        if (   !toggleHUD
+            || diamondCount == 0
+            || client.inGameHud.getChatHud().isChatFocused() ) return;
+
+
+        TextRenderer textRenderer = client.textRenderer;
+        int y = client.getWindow().getScaledHeight();
+        y -= textRenderer.fontHeight - 2;
+        y -= 5;
+
+        context.drawText(
+                textRenderer,
+                "Diamonds in your inventory: " + diamondCount,
+                5,
+                y,
+                0xFFFFFFFF,
+                true
+        );
 
     }
 
