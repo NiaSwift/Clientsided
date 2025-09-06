@@ -1,4 +1,6 @@
 {
+    "key.clientsided.toggleHUD": "Toggle HUD",
+    "key.clientsided.openScreen": "Open Test Screen",
     "toggleHUD": "The HUD has been toggled %s!",
     "toggleHUD.on": "on",
     "toggleHUD.off": "off"

@@ -20,38 +20,52 @@ import org.lwjgl.glfw.GLFW;
 
 public class ClientsidedClient implements ClientModInitializer {
 
-    private static KeyBinding keyBinding;
+    private static KeyBinding toggleHUDKeybind;
+    private static KeyBinding openScreenKeybind;
     private static boolean toggleHUD;
 
     @Override
     public void onInitializeClient() {
 
-        keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        toggleHUDKeybind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.clientsided.toggleHUD", // The translation key of the keybinding's name
                 InputUtil.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
-                GLFW.GLFW_KEY_V, // The keycode of the key
+                GLFW.GLFW_KEY_KP_1, // The keycode of the key
                 "key.categories.creative" // The translation key of the keybinding's category.
         ));
 
+        openScreenKeybind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+            "key.clientsided.openScreen", // The translation key of the keybinding's name
+            InputUtil.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
+            GLFW.GLFW_KEY_KP_2, // The keycode of the key
+            "key.categories.creative" // The translation key of the keybinding's category.
+        ));
+
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if ( client.player != null ) {
-                while (keyBinding.wasPressed()) {
-                    toggleHUD =! toggleHUD;
-                    if (toggleHUD) {
-                        client.player.sendMessage(
-                            Text.translatable("toggleHUD",
-                                Text.translatable("toggleHUD.on").formatted(Formatting.GREEN)),
-                            true
-                        );
-                    } else {
-                        client.player.sendMessage(
-                            Text.translatable("toggleHUD",
-                                Text.translatable("toggleHUD.off").formatted(Formatting.RED)),
-                            true
-                        );
-                    }
-                }
+            if ( client.player == null ) return;
+            if ( !toggleHUDKeybind.wasPressed()) return;
+
+            toggleHUD =! toggleHUD;
+            if (toggleHUD) {
+                client.player.sendMessage(
+                    Text.translatable("toggleHUD",
+                        Text.translatable("toggleHUD.on").formatted(Formatting.GREEN)),
+                    true
+                );
+            } else {
+                client.player.sendMessage(
+                    Text.translatable("toggleHUD",
+                        Text.translatable("toggleHUD.off").formatted(Formatting.RED)),
+                    true
+                );
             }
+
+        });
+
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            if ( client.player == null ) return;
+            if ( !openScreenKeybind.wasPressed()) return;
+            client.setScreen(new TestScreen());
         });
 
 
