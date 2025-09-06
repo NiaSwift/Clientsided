@@ -65,6 +65,14 @@ jar {
 	}
 }
 
+loom {
+    runs {
+        client {
+            programArgs(["--username", "NiaSwift", "--uuid", "ed552d54-ff3b-4cc8-9d4c-eebc86241644"])
+        }
+    }
+}
+
 // configure the maven publication
 publishing {
 	publications {
