@@ -2,6 +2,7 @@ package com.niaswift.clientsided;
 
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -21,25 +22,57 @@ public class TestScreen extends Screen {
     }
 
 
-    public ButtonWidget button1;
-    public ButtonWidget button2;
+    public ButtonWidget button;
+    public ButtonWidget draggableButton;
+    static private int buttonWidth = 200;
+    static private int buttonHeight = 20;
+    static private Integer draggableButtonX;
+    static private int draggableButtonY = 20;
+    static private boolean dragging;
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (draggableButton.isMouseOver(mouseX, mouseY)) dragging = true;
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        dragging = false;
+        this.setFocused(null);
+        return super.mouseReleased(mouseX, mouseY, button);
+    }
+
+    @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+        if (dragging) {
+            draggableButtonX = mouseX - (buttonWidth / 2);
+            draggableButtonY = mouseY - (buttonHeight / 2);
+            draggableButton.setX(draggableButtonX);
+            draggableButton.setY(draggableButtonY);
+        }
+        super.render(context, mouseX, mouseY, deltaTicks);
+    }
 
     @Override
     protected void init() {
-        button1 = ButtonWidget.builder(Text.literal("Button 1"), button -> {
-                if (player != null) player.sendMessage(Text.of("You clicked button1!"), false);
+
+        button = ButtonWidget.builder(Text.literal("Button"), button -> {
+                if (player != null) player.sendMessage(Text.of("You clicked button!"), false);
             })
-            .dimensions(width / 2 - 205, 20, 200, 20)
-            .tooltip(Tooltip.of(Text.literal("Tooltip of button1")))
-            .build();
-        button2 = ButtonWidget.builder(Text.literal("Button 2"), button -> {
-                if (player != null) player.sendMessage(Text.of("You clicked button2!"), false);
-            })
-            .dimensions(width / 2 + 5, 20, 200, 20)
-            .tooltip(Tooltip.of(Text.literal("Tooltip of button2")))
+            .dimensions(width / 2 - 205, 20, buttonWidth, buttonHeight)
+            .tooltip(Tooltip.of(Text.literal("Tooltip of button")))
             .build();
 
-        addDrawableChild(button1);
-        addDrawableChild(button2);
+        if (draggableButtonX == null) draggableButtonX = width / 2 + 5;
+        draggableButton = ButtonWidget.builder(Text.literal("Draggable Button"), button -> {
+                if (player != null) player.sendMessage(Text.of("You clicked the draggable button!"), false);
+            })
+            .dimensions(draggableButtonX, draggableButtonY, buttonWidth, buttonHeight)
+            .tooltip(Tooltip.of(Text.literal("Tooltip of draggable button")))
+            .build();
+
+        addDrawableChild(button);
+        addDrawableChild(draggableButton);
     }
 }
