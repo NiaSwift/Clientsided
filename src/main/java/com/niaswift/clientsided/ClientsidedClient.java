@@ -22,6 +22,7 @@ public class ClientsidedClient implements ClientModInitializer {
 
     private static KeyBinding toggleHUDKeybind;
     private static KeyBinding openScreenKeybind;
+    private static KeyBinding showCursorKeybind;
     private static boolean toggleHUD;
 
     @Override
@@ -38,6 +39,13 @@ public class ClientsidedClient implements ClientModInitializer {
             "key.clientsided.openScreen", // The translation key of the keybinding's name
             InputUtil.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
             GLFW.GLFW_KEY_KP_2, // The keycode of the key
+            "key.categories.creative" // The translation key of the keybinding's category.
+        ));
+
+        showCursorKeybind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+            "key.clientsided.showCursor", // The translation key of the keybinding's name
+            InputUtil.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
+            GLFW.GLFW_KEY_KP_3, // The keycode of the key
             "key.categories.creative" // The translation key of the keybinding's category.
         ));
 
@@ -66,6 +74,12 @@ public class ClientsidedClient implements ClientModInitializer {
             if ( client.player == null ) return;
             if ( !openScreenKeybind.wasPressed()) return;
             client.setScreen(new TestScreen());
+        });
+
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            if ( client.player == null ) return;
+            if ( !showCursorKeybind.wasPressed()) return;
+            client.mouse.unlockCursor();
         });
 
 
