@@ -29,24 +29,24 @@ public class ClientsidedClient implements ClientModInitializer {
     public void onInitializeClient() {
 
         toggleHUDKeybind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.clientsided.toggleHUD", // The translation key of the keybinding's name
-                InputUtil.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
-                GLFW.GLFW_KEY_KP_1, // The keycode of the key
-                "key.categories.creative" // The translation key of the keybinding's category.
+            "key.clientsided.toggleHUD", // The translation key of the keybinding's name
+            InputUtil.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
+            GLFW.GLFW_KEY_KP_1, // The keycode of the key
+            KeyBinding.Category.CREATIVE // The translation key of the keybinding's category.
         ));
 
         openScreenKeybind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
             "key.clientsided.openScreen", // The translation key of the keybinding's name
             InputUtil.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
             GLFW.GLFW_KEY_KP_2, // The keycode of the key
-            "key.categories.creative" // The translation key of the keybinding's category.
+            KeyBinding.Category.CREATIVE // The translation key of the keybinding's category.
         ));
 
         showCursorKeybind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
             "key.clientsided.showCursor", // The translation key of the keybinding's name
             InputUtil.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
             GLFW.GLFW_KEY_KP_3, // The keycode of the key
-            "key.categories.creative" // The translation key of the keybinding's category.
+            KeyBinding.Category.CREATIVE // The translation key of the keybinding's category.
         ));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {

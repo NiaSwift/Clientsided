@@ -2,6 +2,7 @@ package com.niaswift.clientsided;
 
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
@@ -31,16 +32,16 @@ public class TestScreen extends Screen {
     static private boolean dragging;
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (draggableButton.isMouseOver(mouseX, mouseY)) dragging = true;
-        return super.mouseClicked(mouseX, mouseY, button);
+    public boolean mouseClicked(Click click, boolean doubled) {
+        if (draggableButton.isMouseOver(click.x(), click.y())) dragging = true;
+        return super.mouseClicked(click, doubled);
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+    public boolean mouseReleased(Click click) {
         dragging = false;
         this.setFocused(null);
-        return super.mouseReleased(mouseX, mouseY, button);
+        return super.mouseReleased(click);
     }
 
     @Override
