@@ -1,7 +1,6 @@
 package com.niaswift.clientsided;
 
 
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -18,15 +17,14 @@ public class TestScreen extends Screen {
         // The parameter is the title of the screen,
         // which will be narrated when you enter the screen.
         super(Text.literal("My tutorial screen"));
-        client = MinecraftClient.getInstance();
         player = client.player;
     }
 
 
     public ButtonWidget button;
     public ButtonWidget draggableButton;
-    static private int buttonWidth = 200;
-    static private int buttonHeight = 20;
+    static private final int buttonWidth = 200;
+    static private final int buttonHeight = 20;
     static private Integer draggableButtonX;
     static private int draggableButtonY = 20;
     static private boolean dragging;
