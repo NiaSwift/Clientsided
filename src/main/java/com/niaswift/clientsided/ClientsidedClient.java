@@ -231,6 +231,7 @@ public class ClientsidedClient implements ClientModInitializer {
 
 //        Clientsided.LOGGER.info("[clientsided/plotIgnore] Extracted plot id: '{}'", plotId);
 
+        PlotIgnoreConfig.get().add(plotId);
 //        if (PlotIgnoreConfig.get().add(plotId)) {
 //            Clientsided.LOGGER.info("[clientsided/plotIgnore] Added '{}' to plot ignore list (saved to config)", plotId);
 //            client.player.sendMessage(
