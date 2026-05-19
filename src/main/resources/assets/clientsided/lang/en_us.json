@@ -1,6 +1,8 @@
 {
     "key.clientsided.toggleHUD": "Toggle HUD",
     "key.clientsided.openScreen": "Open Test Screen",
+    "key.clientsided.ignorePlot": "Ignore Plot",
+    "plotIgnore.added": "Plot added to ignore list: %s",
     "toggleHUD": "The HUD has been toggled %s!",
     "toggleHUD.on": "on",
     "toggleHUD.off": "off"

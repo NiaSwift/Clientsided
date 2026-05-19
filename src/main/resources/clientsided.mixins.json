@@ -5,6 +5,10 @@
 	"mixins": [
 		"ExampleMixin"
 	],
+	"client": [
+		"client.HandledScreenMixin",
+		"client.HandledScreenInvoker"
+	],
 	"injectors": {
 		"defaultRequire": 1
 	},
