@@ -231,15 +231,15 @@ public class ClientsidedClient implements ClientModInitializer {
 
 //        Clientsided.LOGGER.info("[clientsided/plotIgnore] Extracted plot id: '{}'", plotId);
 
-        if (PlotIgnoreConfig.get().add(plotId)) {
+//        if (PlotIgnoreConfig.get().add(plotId)) {
 //            Clientsided.LOGGER.info("[clientsided/plotIgnore] Added '{}' to plot ignore list (saved to config)", plotId);
-            client.player.sendMessage(
-                Text.translatable("plotIgnore.added", plotId).formatted(Formatting.GRAY),
-                true
-            );
-        } else {
+//            client.player.sendMessage(
+//                Text.translatable("plotIgnore.added", plotId).formatted(Formatting.GRAY),
+//                true
+//            );
+//        } else {
 //            Clientsided.LOGGER.info("[clientsided/plotIgnore] Plot id '{}' was already in the ignore list", plotId);
-        }
+//        }
     }
 
     private static void logLoreLinesForPlotDebug(ItemStack stack) {
