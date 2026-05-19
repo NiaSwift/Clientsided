@@ -105,18 +105,18 @@ public class ClientsidedClient implements ClientModInitializer {
             if (!TrendingPlayersScreenHelper.isTrendingPlayersScreen(trendingScreen)) {
                 return;
             }
-            Clientsided.LOGGER.info(
-                "[clientsided/plotIgnore] Trending GUI initialized; registering screen-only key listener"
-            );
+//            Clientsided.LOGGER.info(
+//                "[clientsided/plotIgnore] Trending GUI initialized; registering screen-only key listener"
+//            );
             ScreenKeyboardEvents.afterKeyPress(screen).register((s, keyInput) -> {
                 if (!ignorePlotKeybind.matchesKey(keyInput)) {
                     return;
                 }
-                Clientsided.LOGGER.info(
-                    "[clientsided/plotIgnore] Ignore Plot key in Trending GUI (key={}, scancode={})",
-                    keyInput.key(),
-                    keyInput.scancode()
-                );
+//                Clientsided.LOGGER.info(
+//                    "[clientsided/plotIgnore] Ignore Plot key in Trending GUI (key={}, scancode={})",
+//                    keyInput.key(),
+//                    keyInput.scancode()
+//                );
                 onIgnorePlotAddUnderCursor(client, trendingScreen);
             });
         });
@@ -129,24 +129,24 @@ public class ClientsidedClient implements ClientModInitializer {
             plotDebugLastScreen = current;
             if (current instanceof HandledScreen<?> handled) {
                 String plainTitle = handled.getTitle().getString();
-                Clientsided.LOGGER.info(
-                    "[clientsided/plotIgnore] HandledScreen opened: plainTitle='{}' class={}",
-                    plainTitle,
-                    handled.getClass().getName()
-                );
+//                Clientsided.LOGGER.info(
+//                    "[clientsided/plotIgnore] HandledScreen opened: plainTitle='{}' class={}",
+//                    plainTitle,
+//                    handled.getClass().getName()
+//                );
                 boolean trending = TrendingPlayersScreenHelper.isTrendingPlayersScreen(handled);
-                Clientsided.LOGGER.info(
-                    "[clientsided/plotIgnore] Trending GUI title match? {} (expected '{}')",
-                    trending,
-                    TrendingPlayersScreenHelper.TRENDING_PLAYERS_TITLE
-                );
+//                Clientsided.LOGGER.info(
+//                    "[clientsided/plotIgnore] Trending GUI title match? {} (expected '{}')",
+//                    trending,
+//                    TrendingPlayersScreenHelper.TRENDING_PLAYERS_TITLE
+//                );
             } else if (current != null) {
-                Clientsided.LOGGER.info(
-                    "[clientsided/plotIgnore] Screen opened (not HandledScreen): {}",
-                    current.getClass().getName()
-                );
+//                Clientsided.LOGGER.info(
+//                    "[clientsided/plotIgnore] Screen opened (not HandledScreen): {}",
+//                    current.getClass().getName()
+//                );
             } else {
-                Clientsided.LOGGER.info("[clientsided/plotIgnore] Screen closed (in game / no GUI)");
+//                Clientsided.LOGGER.info("[clientsided/plotIgnore] Screen closed (in game / no GUI)");
             }
         });
 
@@ -190,55 +190,55 @@ public class ClientsidedClient implements ClientModInitializer {
 
     private static void onIgnorePlotAddUnderCursor(MinecraftClient client, HandledScreen<?> handledScreen) {
         if (client.player == null) {
-            Clientsided.LOGGER.warn("[clientsided/plotIgnore] Abort: client.player is null");
+//            Clientsided.LOGGER.warn("[clientsided/plotIgnore] Abort: client.player is null");
             return;
         }
 
-        Clientsided.LOGGER.info("[clientsided/plotIgnore] Resolving slot under cursor");
+//        Clientsided.LOGGER.info("[clientsided/plotIgnore] Resolving slot under cursor");
 
         double mouseX = client.mouse.getX() * (double) client.getWindow().getScaledWidth() / client.getWindow().getWidth();
         double mouseY = client.mouse.getY() * (double) client.getWindow().getScaledHeight() / client.getWindow().getHeight();
-        Clientsided.LOGGER.info(
-            "[clientsided/plotIgnore] Raw mouse=({}, {}) scaled=({}, {}) window={}x{}",
-            client.mouse.getX(),
-            client.mouse.getY(),
-            mouseX,
-            mouseY,
-            client.getWindow().getScaledWidth(),
-            client.getWindow().getScaledHeight()
-        );
+//        Clientsided.LOGGER.info(
+//            "[clientsided/plotIgnore] Raw mouse=({}, {}) scaled=({}, {}) window={}x{}",
+//            client.mouse.getX(),
+//            client.mouse.getY(),
+//            mouseX,
+//            mouseY,
+//            client.getWindow().getScaledWidth(),
+//            client.getWindow().getScaledHeight()
+//        );
 
         Slot slot = TrendingPlayersScreenHelper.getSlotUnderMouse(handledScreen, mouseX, mouseY);
         if (slot == null) {
-            Clientsided.LOGGER.warn("[clientsided/plotIgnore] Abort: no slot under mouse (hover over an item first)");
+//            Clientsided.LOGGER.warn("[clientsided/plotIgnore] Abort: no slot under mouse (hover over an item first)");
             return;
         }
 
         ItemStack stack = slot.getStack();
-        Clientsided.LOGGER.info(
-            "[clientsided/plotIgnore] Hovered slot empty={} item={} slot={}",
-            stack.isEmpty(),
-            stack.getItem(),
-            slot
-        );
+//        Clientsided.LOGGER.info(
+//            "[clientsided/plotIgnore] Hovered slot empty={} item={} slot={}",
+//            stack.isEmpty(),
+//            stack.getItem(),
+//            slot
+//        );
 
         String plotId = PlotIdUtil.extractPlotId(stack);
         if (plotId == null) {
-            Clientsided.LOGGER.warn("[clientsided/plotIgnore] Abort: no lore line starting with 'ID: ' (dump below)");
-            logLoreLinesForPlotDebug(stack);
+//            Clientsided.LOGGER.warn("[clientsided/plotIgnore] Abort: no lore line starting with 'ID: ' (dump below)");
+//            logLoreLinesForPlotDebug(stack);
             return;
         }
 
-        Clientsided.LOGGER.info("[clientsided/plotIgnore] Extracted plot id: '{}'", plotId);
+//        Clientsided.LOGGER.info("[clientsided/plotIgnore] Extracted plot id: '{}'", plotId);
 
         if (PlotIgnoreConfig.get().add(plotId)) {
-            Clientsided.LOGGER.info("[clientsided/plotIgnore] Added '{}' to plot ignore list (saved to config)", plotId);
+//            Clientsided.LOGGER.info("[clientsided/plotIgnore] Added '{}' to plot ignore list (saved to config)", plotId);
             client.player.sendMessage(
                 Text.translatable("plotIgnore.added", plotId).formatted(Formatting.GRAY),
                 true
             );
         } else {
-            Clientsided.LOGGER.info("[clientsided/plotIgnore] Plot id '{}' was already in the ignore list", plotId);
+//            Clientsided.LOGGER.info("[clientsided/plotIgnore] Plot id '{}' was already in the ignore list", plotId);
         }
     }
 
