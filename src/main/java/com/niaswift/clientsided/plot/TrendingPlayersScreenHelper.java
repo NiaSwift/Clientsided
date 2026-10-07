@@ -7,7 +7,7 @@ import net.minecraft.screen.slot.Slot;
 
 public final class TrendingPlayersScreenHelper {
 
-    public static final String TRENDING_PLAYERS_TITLE = "Trending - Players";
+    public static final String TRENDING_PLAYERS_TITLE = "Now Playing";
 
     private TrendingPlayersScreenHelper() {
     }
