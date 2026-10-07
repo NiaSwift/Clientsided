@@ -122,7 +122,7 @@ public class ClientsidedClient implements ClientModInitializer {
         });
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            Screen current = client.screen;
+            Screen current = client.gui.screen();
             if (current == plotDebugLastScreen) {
                 return;
             }
@@ -172,7 +172,7 @@ public class ClientsidedClient implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if ( client.player == null ) return;
             if ( !openScreenKeybind.consumeClick()) return;
-            client.setScreen(new TestScreen());
+            client.gui.setScreen(new TestScreen());
         });
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
@@ -290,7 +290,7 @@ public class ClientsidedClient implements ClientModInitializer {
 
         if (   !toggleHUD
             || diamondCount == 0
-            || client.gui.getChat().isChatFocused() ) return;
+            || client.gui.hud.getChat().isChatFocused() ) return;
 
 
         Font textRenderer = client.font;
