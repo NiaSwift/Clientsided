@@ -2,7 +2,7 @@ package com.niaswift.clientsided;
 
 
 import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.Button;
@@ -43,21 +43,21 @@ public class TestScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
+    public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
         if (dragging) {
             draggableButtonX = mouseX - (buttonWidth / 2);
             draggableButtonY = mouseY - (buttonHeight / 2);
             draggableButton.setX(draggableButtonX);
             draggableButton.setY(draggableButtonY);
         }
-        super.render(context, mouseX, mouseY, deltaTicks);
+        super.extractRenderState(context, mouseX, mouseY, deltaTicks);
     }
 
     @Override
     protected void init() {
 
         button = Button.builder(Component.literal("Button"), button -> {
-                if (player != null) player.displayClientMessage(Component.nullToEmpty("You clicked button!"), false);
+                if (player != null) player.sendOverlayMessage(Component.nullToEmpty("You clicked button!"));
             })
             .bounds(width / 2 - 205, 20, buttonWidth, buttonHeight)
             .tooltip(Tooltip.create(Component.literal("Tooltip of button")))
@@ -65,7 +65,7 @@ public class TestScreen extends Screen {
 
         if (draggableButtonX == null) draggableButtonX = width / 2 + 5;
         draggableButton = Button.builder(Component.literal("Draggable Button"), button -> {
-                if (player != null) player.displayClientMessage(Component.nullToEmpty("You clicked the draggable button!"), false);
+                if (player != null) player.sendOverlayMessage(Component.nullToEmpty("You clicked the draggable button!"));
             })
             .bounds(draggableButtonX, draggableButtonY, buttonWidth, buttonHeight)
             .tooltip(Tooltip.create(Component.literal("Tooltip of draggable button")))

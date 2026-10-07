@@ -2,7 +2,7 @@ package com.niaswift.clientsided;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientSendMessageEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
@@ -14,7 +14,7 @@ import com.niaswift.clientsided.plot.PlotIgnoreConfig;
 import com.niaswift.clientsided.plot.TrendingPlayersScreenHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.player.LocalPlayer;
@@ -70,28 +70,28 @@ public class ClientsidedClient implements ClientModInitializer {
             handleServerNode1Response(message.getString())
         );
 
-        toggleHUDKeybind = KeyBindingHelper.registerKeyBinding(new KeyMapping(
+        toggleHUDKeybind = KeyMappingHelper.registerKeyMapping(new KeyMapping(
             "key.clientsided.toggleHUD", // The translation key of the keybinding's name
             InputConstants.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
             GLFW.GLFW_KEY_KP_1, // The keycode of the key
             KeyMapping.Category.CREATIVE // The translation key of the keybinding's category.
         ));
 
-        openScreenKeybind = KeyBindingHelper.registerKeyBinding(new KeyMapping(
+        openScreenKeybind = KeyMappingHelper.registerKeyMapping(new KeyMapping(
             "key.clientsided.openScreen", // The translation key of the keybinding's name
             InputConstants.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
             GLFW.GLFW_KEY_KP_2, // The keycode of the key
             KeyMapping.Category.CREATIVE // The translation key of the keybinding's category.
         ));
 
-        showCursorKeybind = KeyBindingHelper.registerKeyBinding(new KeyMapping(
+        showCursorKeybind = KeyMappingHelper.registerKeyMapping(new KeyMapping(
             "key.clientsided.showCursor", // The translation key of the keybinding's name
             InputConstants.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
             GLFW.GLFW_KEY_KP_3, // The keycode of the key
             KeyMapping.Category.CREATIVE // The translation key of the keybinding's category.
         ));
 
-        ignorePlotKeybind = KeyBindingHelper.registerKeyBinding(new KeyMapping(
+        ignorePlotKeybind = KeyMappingHelper.registerKeyMapping(new KeyMapping(
             "key.clientsided.ignorePlot",
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_KP_4,
@@ -156,16 +156,14 @@ public class ClientsidedClient implements ClientModInitializer {
 
             toggleHUD =! toggleHUD;
             if (toggleHUD) {
-                client.player.displayClientMessage(
+                client.player.sendOverlayMessage(
                     Component.translatable("toggleHUD",
-                        Component.translatable("toggleHUD.on").withStyle(ChatFormatting.GREEN)),
-                    true
+                        Component.translatable("toggleHUD.on").withStyle(ChatFormatting.GREEN))
                 );
             } else {
-                client.player.displayClientMessage(
+                client.player.sendOverlayMessage(
                     Component.translatable("toggleHUD",
-                        Component.translatable("toggleHUD.off").withStyle(ChatFormatting.RED)),
-                    true
+                        Component.translatable("toggleHUD.off").withStyle(ChatFormatting.RED))
                 );
             }
 
@@ -282,7 +280,7 @@ public class ClientsidedClient implements ClientModInitializer {
         return false;
     }
 
-    private void hud(GuiGraphics context, DeltaTracker tickCounter) {
+    private void hud(GuiGraphicsExtractor context, DeltaTracker tickCounter) {
 
         Minecraft client = Minecraft.getInstance();
         LocalPlayer player = client.player;
@@ -300,7 +298,7 @@ public class ClientsidedClient implements ClientModInitializer {
         y -= textRenderer.lineHeight - 2;
         y -= 5;
 
-        context.drawString(
+        context.text(
                 textRenderer,
                 "Diamonds in your inventory: " + diamondCount,
                 5,
