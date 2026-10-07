@@ -29,7 +29,6 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.network.chat.Component;
 import net.minecraft.ChatFormatting;
 import net.minecraft.resources.Identifier;
-import org.lwjgl.glfw.GLFW;
 
 public class ClientsidedClient implements ClientModInitializer {
 
@@ -72,29 +71,25 @@ public class ClientsidedClient implements ClientModInitializer {
 
         toggleHUDKeybind = KeyMappingHelper.registerKeyMapping(new KeyMapping(
             "key.clientsided.toggleHUD", // The translation key of the keybinding's name
-            InputConstants.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
-            GLFW.GLFW_KEY_KP_1, // The keycode of the key
+            InputConstants.KEY_NUMPAD1, // The scancode of the key
             KeyMapping.Category.CREATIVE // The translation key of the keybinding's category.
         ));
 
         openScreenKeybind = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-            "key.clientsided.openScreen", // The translation key of the keybinding's name
-            InputConstants.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
-            GLFW.GLFW_KEY_KP_2, // The keycode of the key
-            KeyMapping.Category.CREATIVE // The translation key of the keybinding's category.
+            "key.clientsided.openScreen",
+            InputConstants.KEY_NUMPAD2,
+            KeyMapping.Category.CREATIVE
         ));
 
         showCursorKeybind = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-            "key.clientsided.showCursor", // The translation key of the keybinding's name
-            InputConstants.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
-            GLFW.GLFW_KEY_KP_3, // The keycode of the key
-            KeyMapping.Category.CREATIVE // The translation key of the keybinding's category.
+            "key.clientsided.showCursor",
+            InputConstants.KEY_NUMPAD3,
+            KeyMapping.Category.CREATIVE
         ));
 
         ignorePlotKeybind = KeyMappingHelper.registerKeyMapping(new KeyMapping(
             "key.clientsided.ignorePlot",
-            InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_KP_4,
+            InputConstants.KEY_NUMPAD4,
             KeyMapping.Category.MISC
         ));
 
