@@ -12,33 +12,33 @@ import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents;
 import com.niaswift.clientsided.plot.PlotIdUtil;
 import com.niaswift.clientsided.plot.PlotIgnoreConfig;
 import com.niaswift.clientsided.plot.TrendingPlayersScreenHelper;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.LoreComponent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.DeltaTracker;
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.ItemLore;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
+import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 public class ClientsidedClient implements ClientModInitializer {
 
     private static final String ALREADY_CONNECTED_MESSAGE = "You are already connected to this server!";
 
-    private static KeyBinding toggleHUDKeybind;
-    private static KeyBinding openScreenKeybind;
-    private static KeyBinding showCursorKeybind;
-    private static KeyBinding ignorePlotKeybind;
+    private static KeyMapping toggleHUDKeybind;
+    private static KeyMapping openScreenKeybind;
+    private static KeyMapping showCursorKeybind;
+    private static KeyMapping ignorePlotKeybind;
     private static boolean toggleHUD;
     private static boolean awaitingServerNode1Response;
     private static boolean passThroughSCommand;
@@ -70,36 +70,36 @@ public class ClientsidedClient implements ClientModInitializer {
             handleServerNode1Response(message.getString())
         );
 
-        toggleHUDKeybind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        toggleHUDKeybind = KeyBindingHelper.registerKeyBinding(new KeyMapping(
             "key.clientsided.toggleHUD", // The translation key of the keybinding's name
-            InputUtil.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
+            InputConstants.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
             GLFW.GLFW_KEY_KP_1, // The keycode of the key
-            KeyBinding.Category.CREATIVE // The translation key of the keybinding's category.
+            KeyMapping.Category.CREATIVE // The translation key of the keybinding's category.
         ));
 
-        openScreenKeybind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        openScreenKeybind = KeyBindingHelper.registerKeyBinding(new KeyMapping(
             "key.clientsided.openScreen", // The translation key of the keybinding's name
-            InputUtil.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
+            InputConstants.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
             GLFW.GLFW_KEY_KP_2, // The keycode of the key
-            KeyBinding.Category.CREATIVE // The translation key of the keybinding's category.
+            KeyMapping.Category.CREATIVE // The translation key of the keybinding's category.
         ));
 
-        showCursorKeybind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        showCursorKeybind = KeyBindingHelper.registerKeyBinding(new KeyMapping(
             "key.clientsided.showCursor", // The translation key of the keybinding's name
-            InputUtil.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
+            InputConstants.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
             GLFW.GLFW_KEY_KP_3, // The keycode of the key
-            KeyBinding.Category.CREATIVE // The translation key of the keybinding's category.
+            KeyMapping.Category.CREATIVE // The translation key of the keybinding's category.
         ));
 
-        ignorePlotKeybind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        ignorePlotKeybind = KeyBindingHelper.registerKeyBinding(new KeyMapping(
             "key.clientsided.ignorePlot",
-            InputUtil.Type.KEYSYM,
+            InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_KP_4,
-            KeyBinding.Category.MISC
+            KeyMapping.Category.MISC
         ));
 
         ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
-            if (!(screen instanceof HandledScreen<?> trendingScreen)) {
+            if (!(screen instanceof AbstractContainerScreen<?> trendingScreen)) {
                 return;
             }
             if (!TrendingPlayersScreenHelper.isTrendingPlayersScreen(trendingScreen)) {
@@ -109,7 +109,7 @@ public class ClientsidedClient implements ClientModInitializer {
 //                "[clientsided/plotIgnore] Trending GUI initialized; registering screen-only key listener"
 //            );
             ScreenKeyboardEvents.afterKeyPress(screen).register((s, keyInput) -> {
-                if (!ignorePlotKeybind.matchesKey(keyInput)) {
+                if (!ignorePlotKeybind.matches(keyInput)) {
                     return;
                 }
 //                Clientsided.LOGGER.info(
@@ -122,12 +122,12 @@ public class ClientsidedClient implements ClientModInitializer {
         });
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            Screen current = client.currentScreen;
+            Screen current = client.screen;
             if (current == plotDebugLastScreen) {
                 return;
             }
             plotDebugLastScreen = current;
-            if (current instanceof HandledScreen<?> handled) {
+            if (current instanceof AbstractContainerScreen<?> handled) {
                 String plainTitle = handled.getTitle().getString();
 //                Clientsided.LOGGER.info(
 //                    "[clientsided/plotIgnore] HandledScreen opened: plainTitle='{}' class={}",
@@ -152,19 +152,19 @@ public class ClientsidedClient implements ClientModInitializer {
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if ( client.player == null ) return;
-            if ( !toggleHUDKeybind.wasPressed()) return;
+            if ( !toggleHUDKeybind.consumeClick()) return;
 
             toggleHUD =! toggleHUD;
             if (toggleHUD) {
-                client.player.sendMessage(
-                    Text.translatable("toggleHUD",
-                        Text.translatable("toggleHUD.on").formatted(Formatting.GREEN)),
+                client.player.displayClientMessage(
+                    Component.translatable("toggleHUD",
+                        Component.translatable("toggleHUD.on").withStyle(ChatFormatting.GREEN)),
                     true
                 );
             } else {
-                client.player.sendMessage(
-                    Text.translatable("toggleHUD",
-                        Text.translatable("toggleHUD.off").formatted(Formatting.RED)),
+                client.player.displayClientMessage(
+                    Component.translatable("toggleHUD",
+                        Component.translatable("toggleHUD.off").withStyle(ChatFormatting.RED)),
                     true
                 );
             }
@@ -173,22 +173,22 @@ public class ClientsidedClient implements ClientModInitializer {
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if ( client.player == null ) return;
-            if ( !openScreenKeybind.wasPressed()) return;
+            if ( !openScreenKeybind.consumeClick()) return;
             client.setScreen(new TestScreen());
         });
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if ( client.player == null ) return;
-            if ( !showCursorKeybind.wasPressed()) return;
-            client.mouse.unlockCursor();
+            if ( !showCursorKeybind.consumeClick()) return;
+            client.mouseHandler.releaseMouse();
         });
 
 
-        HudElementRegistry.attachElementAfter(VanillaHudElements.MISC_OVERLAYS, Identifier.of(Clientsided.MOD_ID), this::hud);
+        HudElementRegistry.attachElementAfter(VanillaHudElements.MISC_OVERLAYS, Identifier.parse(Clientsided.MOD_ID), this::hud);
 
     }
 
-    private static void onIgnorePlotAddUnderCursor(MinecraftClient client, HandledScreen<?> handledScreen) {
+    private static void onIgnorePlotAddUnderCursor(Minecraft client, AbstractContainerScreen<?> handledScreen) {
         if (client.player == null) {
 //            Clientsided.LOGGER.warn("[clientsided/plotIgnore] Abort: client.player is null");
             return;
@@ -196,8 +196,8 @@ public class ClientsidedClient implements ClientModInitializer {
 
 //        Clientsided.LOGGER.info("[clientsided/plotIgnore] Resolving slot under cursor");
 
-        double mouseX = client.mouse.getX() * (double) client.getWindow().getScaledWidth() / client.getWindow().getWidth();
-        double mouseY = client.mouse.getY() * (double) client.getWindow().getScaledHeight() / client.getWindow().getHeight();
+        double mouseX = client.mouseHandler.xpos() * (double) client.getWindow().getGuiScaledWidth() / client.getWindow().getScreenWidth();
+        double mouseY = client.mouseHandler.ypos() * (double) client.getWindow().getGuiScaledHeight() / client.getWindow().getScreenHeight();
 //        Clientsided.LOGGER.info(
 //            "[clientsided/plotIgnore] Raw mouse=({}, {}) scaled=({}, {}) window={}x{}",
 //            client.mouse.getX(),
@@ -214,7 +214,7 @@ public class ClientsidedClient implements ClientModInitializer {
             return;
         }
 
-        ItemStack stack = slot.getStack();
+        ItemStack stack = slot.getItem();
 //        Clientsided.LOGGER.info(
 //            "[clientsided/plotIgnore] Hovered slot empty={} item={} slot={}",
 //            stack.isEmpty(),
@@ -244,13 +244,13 @@ public class ClientsidedClient implements ClientModInitializer {
     }
 
     private static void logLoreLinesForPlotDebug(ItemStack stack) {
-        LoreComponent lore = stack.get(DataComponentTypes.LORE);
+        ItemLore lore = stack.get(DataComponents.LORE);
         if (lore == null) {
             Clientsided.LOGGER.warn("[clientsided/plotIgnore]   (stack has no LORE component)");
             return;
         }
         int i = 0;
-        for (Text line : lore.lines()) {
+        for (Component line : lore.lines()) {
             Clientsided.LOGGER.info("[clientsided/plotIgnore]   lore[{}]='{}'", i, line.getString());
             i++;
         }
@@ -272,35 +272,35 @@ public class ClientsidedClient implements ClientModInitializer {
         awaitingServerNode1Response = false;
         passThroughSCommand = true;
 
-        MinecraftClient client = MinecraftClient.getInstance();
+        Minecraft client = Minecraft.getInstance();
         client.execute(() -> {
-            if (client.getNetworkHandler() != null) {
-                client.getNetworkHandler().sendChatCommand("s");
+            if (client.getConnection() != null) {
+                client.getConnection().sendCommand("s");
             }
         });
 
         return false;
     }
 
-    private void hud(DrawContext context, RenderTickCounter tickCounter) {
+    private void hud(GuiGraphics context, DeltaTracker tickCounter) {
 
-        MinecraftClient client = MinecraftClient.getInstance();
-        ClientPlayerEntity player = client.player;
+        Minecraft client = Minecraft.getInstance();
+        LocalPlayer player = client.player;
         if ( player == null ) return;
 
-        int diamondCount = player.getInventory().count(Items.DIAMOND);
+        int diamondCount = player.getInventory().countItem(Items.DIAMOND);
 
         if (   !toggleHUD
             || diamondCount == 0
-            || client.inGameHud.getChatHud().isChatFocused() ) return;
+            || client.gui.getChat().isChatFocused() ) return;
 
 
-        TextRenderer textRenderer = client.textRenderer;
-        int y = client.getWindow().getScaledHeight();
-        y -= textRenderer.fontHeight - 2;
+        Font textRenderer = client.font;
+        int y = client.getWindow().getGuiScaledHeight();
+        y -= textRenderer.lineHeight - 2;
         y -= 5;
 
-        context.drawText(
+        context.drawString(
                 textRenderer,
                 "Diamonds in your inventory: " + diamondCount,
                 5,

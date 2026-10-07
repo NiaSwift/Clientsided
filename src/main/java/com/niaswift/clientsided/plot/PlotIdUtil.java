@@ -1,9 +1,9 @@
 package com.niaswift.clientsided.plot;
 
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.LoreComponent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.ItemLore;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.chat.Component;
 
 public final class PlotIdUtil {
 
@@ -17,12 +17,12 @@ public final class PlotIdUtil {
             return null;
         }
 
-        LoreComponent lore = stack.get(DataComponentTypes.LORE);
+        ItemLore lore = stack.get(DataComponents.LORE);
         if (lore == null) {
             return null;
         }
 
-        for (Text line : lore.lines()) {
+        for (Component line : lore.lines()) {
             String text = line.getString();
             if (text.startsWith(ID_PREFIX)) {
                 return text.substring(ID_PREFIX.length()).trim();

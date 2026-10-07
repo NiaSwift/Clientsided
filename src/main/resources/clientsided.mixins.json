@@ -6,8 +6,8 @@
 		"ExampleMixin"
 	],
 	"client": [
-		"client.HandledScreenMixin",
-		"client.HandledScreenInvoker"
+        "client.AbstractContainerScreenMixin",
+        "client.AbstractContainerScreenInvoker"
 	],
 	"injectors": {
 		"defaultRequire": 1
